@@ -1,9 +1,6 @@
 package org.launchcode.techjobs.console;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -62,7 +59,7 @@ public class TechJobs {
                 String searchTerm = in.nextLine();
 
                 if (searchField.equals("all")) {
-                    System.out.println("Search all fields not yet implemented.");
+                    printJobs(JobData.findByValue(searchTerm));
                 } else {
                     printJobs(JobData.findByColumnAndValue(searchField, searchTerm));
                 }
@@ -112,16 +109,33 @@ public class TechJobs {
     // Print a list of jobs
     private static void printJobs(ArrayList<HashMap<String, String>> someJobs) {
 
-        for (HashMap<String, String> job : someJobs) {
-        StringBuilder ji = new StringBuilder();
-        ji.append("\n*****\n");
-            for (Map.Entry<String, String> jobColumn : job.entrySet()) {
-                ji.append(jobColumn.getKey() + ": " + jobColumn.getValue() + "\n");
-            }
-            System.out.println(ji + "*****");
 
+        class MapComparator implements Comparator<Map<String, String>>
+        {
+
+            public int compare(Map<String, String> first,
+                               Map<String, String> second)
+            {
+                String key = "location";
+
+                // TODO: Null checking, both for maps and values
+                String firstValue = first.get(key);
+                String secondValue = second.get(key);
+                return firstValue.compareTo(secondValue);
+            }
         }
 
-        System.out.println("There are no matching results.");
+        Collections.sort(someJobs, new MapComparator());
+
+
+        for (HashMap<String, String> job: someJobs) {
+            System.out.println("**********");
+            for (Map.Entry<String, String> detail: job.entrySet()) {
+                System.out.println(detail.getKey() + ": " + detail.getValue());
+            }
+            System.out.println("**********\n");
+
+            
+        }
     }
 }
